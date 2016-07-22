@@ -8,8 +8,7 @@ where
 import Text.Pandoc
 import Text.Pandoc.Error
 import Text.Parsec
-import Data.Monoid
-import Data.List (intersperse)
+import Data.List (intersperse, intercalate)
 
 onLeft :: (a -> b) -> Either a c -> Either b c
 onLeft f (Left x) = Left (f x)
@@ -33,7 +32,22 @@ paragraph = nowikiBlock
           -- <|> orderedList
           <|> textParagraph
 
-nowikiBlock = fail "not implemented"
+nowikiBlock = do
+    try (string "{{{" *> (eol <|> eof))
+    lns <- many nowikiLine
+    string "}}}" *> (eol <|> eof)
+    return $ CodeBlock nullAttr (intercalate "\n" lns)
+
+nowikiLine = nowikiEscapedEndMarker <|> nowikiRegularLine
+
+nowikiEscapedEndMarker = try $ do
+    oneOf " \t"
+    many (noneOf "\r\n") <* (eol <|> eof)
+
+nowikiRegularLine = do
+    notFollowedBy . try $ string "}}}" *> (eol <|> eof)
+    many (noneOf "\r\n") <* (eol <|> eof)
+
 
 emptyParagraph = try (endOfParagraph *> return Null)
 
@@ -47,23 +61,36 @@ textLine = do
     many1 (notFollowedBy eol *> textItem) <* (eol <|> eof)
 
 textItem =
-    rawTextItem <|>
+    nowikiTextItem <|>
     boldTextItem <|>
-    italTextItem
+    italTextItem <|>
+    rawTextItem
 
 boldTextItem = Strong <$> (try (string "**") *> many1 boldItalTextItem <* string "**")
 
 italTextItem = Emph <$> (try (string "//") *> many1 italBoldTextItem <* string "//")
 
 boldItalTextItem =
-    rawTextItem <|>
-    italTextItem
+    nowikiTextItem <|>
+    italTextItem <|>
+    rawTextItem
 
 italBoldTextItem =
-    rawTextItem <|>
-    boldTextItem
+    nowikiTextItem <|>
+    boldTextItem <|>
+    rawTextItem
 
 rawTextItem = Str <$> many1 textChar
+
+nowikiTextItem =
+    Code nullAttr <$>
+    (inlineNowikiStart *> manyTill inlineNowikiItem inlineNowikiEnd)
+
+inlineNowikiEnd = try (string "}}}" *> notFollowedBy (char '}'))
+
+inlineNowikiStart = try (string "{{{")
+
+inlineNowikiItem = anyChar
 
 textChar = escapedChar <|> safeChar
 

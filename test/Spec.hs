@@ -26,6 +26,26 @@ main = defaultMain $
                     , Str "asdf"
                     ]
                 ]
+        , testCase "Nowiki Block" $
+            assertValid
+                "{{{\n!@#$%\n}}}"
+                [ CodeBlock nullAttr "!@#$%"
+                ]
+        , testCase "Nowiki Block with }}} inside" $
+            assertValid
+                "{{{\n!@#$%\n }}}\n}}}"
+                [ CodeBlock nullAttr "!@#$%\n}}}"
+                ]
+        , testCase "Nowiki Inline" $
+            assertValid
+                "{{{!@#$%}}}"
+                [ Para [ Code nullAttr "!@#$%" ]
+                ]
+        , testCase "Nowiki Inline, more than 3 }'s" $
+            assertValid
+                "{{{!@#$%}}}}"
+                [ Para [ Code nullAttr "!@#$%}" ]
+                ]
         , testCase "Horizontal line" $
             assertValid
                 "----\n"
