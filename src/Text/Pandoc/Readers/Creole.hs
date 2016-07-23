@@ -74,7 +74,11 @@ textParagraph = Para . concat . intersperse [Space] <$>
     many1 textLine <* endOfParagraph
 
 textLine = do
-    notFollowedBy $ string "----"
+    notFollowedBy $
+        (ignore . try $ whitespace *> string "----") <|>
+        (ignore . try $ whitespace *> char '=') <|>
+        (ignore eol) <|>
+        (ignore eof)
     many1 (notFollowedBy eol *> textItem) <* (eol <|> eof)
 
 textItem =
@@ -153,6 +157,7 @@ whitespace = many whitespaceChar
 ignore :: Parsec s u a -> Parsec s u ()
 ignore = (*> return ())
 
-endOfParagraph = ignore eol
+endOfParagraph = (ignore . lookAhead . try $ whitespace *> string "----")
+               <|> (ignore . lookAhead . try $ whitespace *> char '=')
                <|> ignore eof
-               <|> ignore (lookAhead . try $ string "----")
+               <|> ignore eol

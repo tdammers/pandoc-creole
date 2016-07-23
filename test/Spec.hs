@@ -43,7 +43,7 @@ main = defaultMain $
                     ]
             ]
         , testGroup "Headings"
-            [ testCase "simple" $
+            [ testCase "simple (level 1)" $
                 assertValid
                     "= Level 1"
                     [ Header 1 nullAttr
@@ -51,10 +51,28 @@ main = defaultMain $
                         , Space
                         , Str "1" ]
                     ]
+            , testCase "simple (level 2)" $
+                assertValid
+                    "== Level 2"
+                    [ Header 2 nullAttr
+                        [ Str "Level"
+                        , Space
+                        , Str "2" ]
+                    ]
             , testCase "followed by newline" $
                 assertValid
                     "= Level 1\n"
                     [ Header 1 nullAttr
+                        [ Str "Level"
+                        , Space
+                        , Str "1" ]
+                    ]
+            , testCase "after Para" $
+                assertValid
+                    "asdf\n= Level 1\n"
+                    [ Para
+                        [ Str "asdf" ]
+                    , Header 1 nullAttr
                         [ Str "Level"
                         , Space
                         , Str "1" ]
@@ -100,7 +118,7 @@ main = defaultMain $
                     [ HorizontalRule
                     , Para [Str "asdf"]
                     ]
-            , testCase "Para + Horizontal line" $
+            , testCase "Horizontal line between Paras" $
                 assertValid
                     "asdf\n----\nasdf"
                     [ Para
