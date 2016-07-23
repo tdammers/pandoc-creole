@@ -85,6 +85,17 @@ main = defaultMain $
                 [ Para
                     [ Strong [ Emph [ Str "asdf" ] ] ]
                 ]
+        , testCase "Bold spanning two lines" $
+            assertValid
+                "**asdf\nasdf**"
+                [ Para
+                    [ Strong
+                        [ Str "asdf"
+                        , Space
+                        , Str "asdf"
+                        ]
+                    ]
+                ]
         ]
 
 assertValid :: String -> [Block] -> IO ()

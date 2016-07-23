@@ -64,6 +64,7 @@ textItem =
     nowikiTextItem <|>
     boldTextItem <|>
     italTextItem <|>
+    whitespaceTextItem <|>
     rawTextItem
 
 boldTextItem = Strong <$> (try (string "**") *> many1 boldItalTextItem <* string "**")
@@ -73,14 +74,21 @@ italTextItem = Emph <$> (try (string "//") *> many1 italBoldTextItem <* string "
 boldItalTextItem =
     nowikiTextItem <|>
     italTextItem <|>
+    whitespaceTextItem <|>
     rawTextItem
 
 italBoldTextItem =
     nowikiTextItem <|>
     boldTextItem <|>
+    whitespaceTextItem <|>
     rawTextItem
 
 rawTextItem = Str <$> many1 textChar
+
+whitespaceTextItem = Space <$ many1 irrelevantWhitespace
+
+irrelevantWhitespace =
+    (ignore . many1) (oneOf " \t") <|> eol *> notFollowedBy eol
 
 nowikiTextItem =
     Code nullAttr <$>
@@ -96,7 +104,7 @@ textChar = escapedChar <|> safeChar
 
 escapedChar = char '~' *> anyChar
 
-safeChar = noneOf " \n\r\t~*/[]"
+safeChar = noneOf " \n\r\t~*/[]\\{}"
 
 eol = (try (string "\r\n") <|> string "\n") *> return ()
 
