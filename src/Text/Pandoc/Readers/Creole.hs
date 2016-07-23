@@ -67,9 +67,28 @@ textItem =
     whitespaceTextItem <|>
     rawTextItem
 
-boldTextItem = Strong <$> (try (string "**") *> many1 boldItalTextItem <* string "**")
+boldTextItem = Strong <$>
+    (
+        try (string "**") *>
+        many1 boldItalTextItem <*
+        (
+            eof <|>
+            (lookAhead . try $ eol *> endOfParagraph) <|>
+            (ignore . try . string $ "**")
+        )
+    )
 
-italTextItem = Emph <$> (try (string "//") *> many1 italBoldTextItem <* string "//")
+italTextItem = Emph <$>
+    (
+        try (string "//") *>
+        many1 italBoldTextItem <*
+        (
+            eof <|>
+            (lookAhead . try $ eol *> endOfParagraph) <|>
+            (ignore . try . string $ "//")
+        )
+    )
+
 
 boldItalTextItem =
     nowikiTextItem <|>
@@ -88,7 +107,7 @@ rawTextItem = Str <$> many1 textChar
 whitespaceTextItem = Space <$ many1 irrelevantWhitespace
 
 irrelevantWhitespace =
-    (ignore . many1) (oneOf " \t") <|> eol *> notFollowedBy eol
+    (ignore . many1) (oneOf " \t") <|> try (eol *> notFollowedBy eol)
 
 nowikiTextItem =
     Code nullAttr <$>

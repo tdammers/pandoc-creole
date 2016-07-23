@@ -96,6 +96,14 @@ main = defaultMain $
                         ]
                     ]
                 ]
+        , testCase "Bold auto-closing at end of paragraph" $
+            assertValid
+                "**asdf\n\nasdf"
+                [ Para
+                    [ Strong [ Str "asdf" ] ]
+                , Para
+                    [ Str "asdf" ]
+                ]
         ]
 
 assertValid :: String -> [Block] -> IO ()
