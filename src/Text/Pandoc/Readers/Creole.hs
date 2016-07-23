@@ -27,10 +27,27 @@ wikipage = Pandoc nullMeta <$> (spaces *> manyTill paragraph eof)
 
 paragraph = nowikiBlock
           <|> horizontalLine
+          <|> heading
           <|> emptyParagraph
           -- <|> unorderedList
           -- <|> orderedList
           <|> textParagraph
+
+heading = do
+    leader <- many1 (char '=')
+    whitespace
+    inner <- manyTill textItem endOfHeading
+    return $ Header (length leader) nullAttr inner
+
+endOfHeading = eof
+             <|> try
+                 (do
+                    whitespace
+                    many (char '=')
+                    whitespace
+                    ignore eol <|> eof
+                 )
+
 
 nowikiBlock = do
     try (string "{{{" *> (eol <|> eof))
@@ -126,6 +143,12 @@ escapedChar = char '~' *> anyChar
 safeChar = noneOf " \n\r\t~*/[]\\{}"
 
 eol = (try (string "\r\n") <|> string "\n") *> return ()
+
+whitespaceChar = oneOf " \t"
+
+whitespace1 = many1 whitespaceChar
+
+whitespace = many whitespaceChar
 
 ignore :: Parsec s u a -> Parsec s u ()
 ignore = (*> return ())

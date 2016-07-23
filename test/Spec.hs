@@ -36,6 +36,38 @@ main = defaultMain $
                 "{{{\n!@#$%\n }}}\n}}}"
                 [ CodeBlock nullAttr "!@#$%\n}}}"
                 ]
+        , testCase "Heading" $
+            assertValid
+                "= Level 1"
+                [ Header 1 nullAttr
+                    [ Str "Level"
+                    , Space
+                    , Str "1" ]
+                ]
+        , testCase "Heading followed by newline" $
+            assertValid
+                "= Level 1\n"
+                [ Header 1 nullAttr
+                    [ Str "Level"
+                    , Space
+                    , Str "1" ]
+                ]
+        , testCase "Heading, explicit terminator" $
+            assertValid
+                "= Level 1 =="
+                [ Header 1 nullAttr
+                    [ Str "Level"
+                    , Space
+                    , Str "1" ]
+                ]
+        , testCase "Heading, explicit terminator, followed by newline" $
+            assertValid
+                "= Level 1 ==\n"
+                [ Header 1 nullAttr
+                    [ Str "Level"
+                    , Space
+                    , Str "1" ]
+                ]
         , testCase "Nowiki Inline" $
             assertValid
                 "{{{!@#$%}}}"
