@@ -42,6 +42,16 @@ main = defaultMain $
                     [ CodeBlock nullAttr "!@#$%\n}}}"
                     ]
             ]
+        , testGroup "Div"
+            [ testCase "simple" $
+                assertValid
+                    "[[[\nHi!\n]]]"
+                    [ Div nullAttr
+                        [ Para
+                            [ Str "Hi!" ]
+                        ]
+                    ]
+            ]
         , testGroup "Headings"
             [ testCase "simple (level 1)" $
                 assertValid

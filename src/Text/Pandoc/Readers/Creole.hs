@@ -26,6 +26,7 @@ readCreole options input =
 wikipage = Pandoc nullMeta <$> (spaces *> manyTill paragraph eof)
 
 paragraph = nowikiBlock
+          <|> division nullAttr
           <|> horizontalLine
           <|> heading
           <|> emptyParagraph
@@ -48,6 +49,20 @@ endOfHeading = eof
                     ignore eol <|> eof
                  )
 
+division attr = do
+    try (string "[[[" *> (eol <|> eof))
+    inner <- manyTill paragraph endOfDiv
+    return $ Div attr inner
+
+endOfDiv = eof
+         <|> try
+             (do
+                whitespace
+                string "]]]"
+                notFollowedBy (char ']')
+                whitespace
+                ignore eol <|> eof
+             )
 
 nowikiBlock = do
     try (string "{{{" *> (eol <|> eof))
@@ -77,6 +92,7 @@ textLine = do
     notFollowedBy $
         (ignore . try $ whitespace *> string "----") <|>
         (ignore . try $ whitespace *> char '=') <|>
+        (ignore . try $ whitespace *> string "]]]" *> notFollowedBy (char ']')) <|>
         (ignore eol) <|>
         (ignore eof)
     many1 (notFollowedBy eol *> textItem) <* (eol <|> eof)
@@ -159,5 +175,6 @@ ignore = (*> return ())
 
 endOfParagraph = (ignore . lookAhead . try $ whitespace *> string "----")
                <|> (ignore . lookAhead . try $ whitespace *> char '=')
+               <|> (ignore . lookAhead . try $ whitespace *> string "]]]" *> notFollowedBy (char ']'))
                <|> ignore eof
                <|> ignore eol
