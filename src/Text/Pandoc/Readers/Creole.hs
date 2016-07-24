@@ -127,6 +127,7 @@ textItem =
     nowikiTextItem <|>
     newlineTextItem <|>
     link <|>
+    image <|>
     boldTextItem <|>
     italTextItem <|>
     whitespaceTextItem <|>
@@ -140,6 +141,15 @@ link = do
         many $ noneOf "]"
     string "]]"
     return $ Link nullAttr [ Str label ] (url, label)
+
+image = do
+    try $ string "{{" *> notFollowedBy (char '{')
+    url <- many $ noneOf "|}"
+    label <- option url $ do
+        char '|'
+        many $ noneOf "}"
+    string "}}"
+    return $ Image nullAttr [ Str label ] (url, label)
 
 newlineTextItem = do
     try $ whitespace *> string "\\\\"
@@ -175,6 +185,7 @@ boldItalTextItem =
     nowikiTextItem <|>
     newlineTextItem <|>
     link <|>
+    image <|>
     italTextItem <|>
     whitespaceTextItem <|>
     rawTextItem
@@ -183,6 +194,7 @@ italBoldTextItem =
     nowikiTextItem <|>
     newlineTextItem <|>
     link <|>
+    image <|>
     boldTextItem <|>
     whitespaceTextItem <|>
     rawTextItem

@@ -218,6 +218,28 @@ main = defaultMain $
                         ]
                     ]
             ]
+        , testGroup "Images"
+            [ testCase "explicit label" $
+                assertValid
+                    "{{http://example.org/|Example}}"
+                    [ Para
+                        [ Image
+                            nullAttr
+                            [ Str "Example" ]
+                            ("http://example.org/", "Example")
+                        ]
+                    ]
+            , testCase "explicit label" $
+                assertValid
+                    "{{http://example.org/}}"
+                    [ Para
+                        [ Image
+                            nullAttr
+                            [ Str "http://example.org/" ]
+                            ("http://example.org/", "http://example.org/")
+                        ]
+                    ]
+            ]
         , testGroup "Inline markup: bold & italic"
             [ testCase "Bold" $
                 assertValid
