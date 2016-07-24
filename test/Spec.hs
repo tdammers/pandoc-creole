@@ -55,7 +55,7 @@ main = defaultMain $
         , testGroup "Annotated Paragraphs"
             [ testCase "div with ID" $
                 assertValid
-                    "@(id=foobar):\n[[[\nHi!\n]]]"
+                    "@(id=foobar)\n[[[\nHi!\n]]]"
                     [ Div ("foobar", [], [])
                         [ Para
                             [ Str "Hi!" ]
@@ -63,7 +63,7 @@ main = defaultMain $
                     ]
             , testCase "div with classes" $
                 assertValid
-                    "@(class=foo bar):\n[[[\nHi!\n]]]"
+                    "@(class=foo bar)\n[[[\nHi!\n]]]"
                     [ Div ("", ["foo", "bar"], [])
                         [ Para
                             [ Str "Hi!" ]
@@ -71,7 +71,7 @@ main = defaultMain $
                     ]
             , testCase "div with other attributes" $
                 assertValid
-                    "@(data-thing=hello):\n[[[\nHi!\n]]]"
+                    "@(data-thing=hello)\n[[[\nHi!\n]]]"
                     [ Div ("", [], [("data-thing", "hello")])
                         [ Para
                             [ Str "Hi!" ]
@@ -79,7 +79,7 @@ main = defaultMain $
                     ]
             , testCase "heading with ID" $
                 assertValid
-                    "@(id=foobar):\n= Hi!"
+                    "@(id=foobar)\n= Hi!"
                     [ Header 1 ("foobar", [], [])
                         [ Str "Hi!" ]
                     ]

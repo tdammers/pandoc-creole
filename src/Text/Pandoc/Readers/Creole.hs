@@ -64,7 +64,7 @@ annotation = do
     let idVal = fromMaybe "" . lookup "id" $ kvp
         classes = words . fromMaybe "" . lookup "class" $ kvp
         kvp' = [ (k,v) | (k,v) <- kvp, k /= "id" && k /= "class" ]
-    string "):"
+    char ')'
     eol
     return (idVal, classes, kvp')
     where
