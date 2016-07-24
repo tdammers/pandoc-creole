@@ -125,10 +125,18 @@ textLine = do
 
 textItem =
     nowikiTextItem <|>
+    newlineTextItem <|>
     boldTextItem <|>
     italTextItem <|>
     whitespaceTextItem <|>
     rawTextItem
+
+newlineTextItem = do
+    try $ whitespace *> string "\\\\"
+    whitespace
+    optional eol
+    whitespace
+    return LineBreak
 
 boldTextItem = Strong <$>
     (
@@ -182,11 +190,21 @@ inlineNowikiStart = try (string "{{{")
 
 inlineNowikiItem = anyChar
 
-textChar = escapedChar <|> safeChar
+textChar = escapedChar <|> safeChar <|> allowedSpecialChar
 
 escapedChar = char '~' *> anyChar
 
 safeChar = noneOf " \n\r\t~*/[]\\{}@"
+
+allowedSpecialChar =
+    try (char '/' <* notFollowedBy (char '/')) <|>
+    try (char '*' <* notFollowedBy (char '*')) <|>
+    try (char '[' <* notFollowedBy (char '[')) <|>
+    try (char '{' <* notFollowedBy (char '{')) <|>
+    try (char '\\' <* notFollowedBy (char '\\')) <|>
+    try (char ']' <* notFollowedBy (char ']')) <|>
+    try (char '}' <* notFollowedBy (char '}')) <|>
+    try (char '@' <* notFollowedBy (char '('))
 
 eol = (try (string "\r\n") <|> string "\n") *> return ()
 

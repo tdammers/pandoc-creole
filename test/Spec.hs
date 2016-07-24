@@ -171,6 +171,31 @@ main = defaultMain $
                         ]
                     ]
             ]
+        , testGroup "Explicit newlines"
+            [ testCase "explicit newline" $
+                assertValid
+                    "asdf \\\\\nasdf"
+                    [ Para
+                        [ Str "asdf"
+                        , LineBreak
+                        , Str "asdf"
+                        ]
+                    ]
+            ]
+        , testGroup "Inline escaping and special chars"
+            [ testCase "escaped characters" $
+                assertValid
+                    "~a~@~[~]"
+                    [ Para
+                        [ Str "a@[]" ]
+                    ]
+            , testCase "special characters requiring no escaping" $
+                assertValid
+                    "/*[]{}"
+                    [ Para
+                        [ Str "/*[]{}" ]
+                    ]
+            ]
         , testGroup "Inline markup: bold & italic"
             [ testCase "Bold" $
                 assertValid
