@@ -32,9 +32,26 @@ paragraph = nowikiBlock
           <|> heading nullAttr
           <|> annotatedParagraph
           <|> emptyParagraph
-          -- <|> unorderedList
+          <|> unorderedList 1
           -- <|> orderedList
           <|> textParagraph
+
+unorderedList level
+    | level <= 10 = do
+        BulletList <$>
+            many1 (
+                fmap (:[]) (unorderedList (succ level))
+                <|>
+                unorderedListItem level
+            )
+    | otherwise = BulletList <$> many1 (unorderedListItem level)
+
+unorderedListItem level = do
+    try (count level (char '*') *> notFollowedBy (char '*') *> whitespace1)
+    listItemContent
+
+listItemContent = (:[]) . Para . concat . intersperse [Space] <$>
+    many1 textLine <* endOfListItem
 
 annotatedParagraph = do
     attr <- try annotation
@@ -248,3 +265,9 @@ endOfParagraph = (ignore . lookAhead . try $ whitespace *> string "----")
                <|> (ignore . lookAhead . try $ whitespace *> string "]]]" *> notFollowedBy (char ']'))
                <|> ignore eof
                <|> ignore eol
+
+endOfListItem = (ignore . lookAhead . try $ whitespace *> string "----")
+              <|> (ignore . lookAhead . try $ whitespace *> char '=')
+              <|> (ignore . lookAhead . try $ oneOf "*#")
+              <|> ignore eof
+              <|> ignore eol
