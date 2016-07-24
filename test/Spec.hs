@@ -77,6 +77,12 @@ main = defaultMain $
                             [ Str "Hi!" ]
                         ]
                     ]
+            , testCase "heading with ID" $
+                assertValid
+                    "@(id=foobar):\n= Hi!"
+                    [ Header 1 ("foobar", [], [])
+                        [ Str "Hi!" ]
+                    ]
             ]
         , testGroup "Headings"
             [ testCase "simple (level 1)" $

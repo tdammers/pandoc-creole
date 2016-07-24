@@ -29,7 +29,7 @@ wikipage = Pandoc nullMeta <$> (spaces *> manyTill paragraph eof)
 paragraph = nowikiBlock
           <|> division nullAttr
           <|> horizontalLine
-          <|> heading
+          <|> heading nullAttr
           <|> annotatedParagraph
           <|> emptyParagraph
           -- <|> unorderedList
@@ -38,7 +38,7 @@ paragraph = nowikiBlock
 
 annotatedParagraph = do
     attr <- try annotation
-    division attr
+    division attr <|> heading attr
 
 annotation = do
     string "@("
@@ -60,11 +60,11 @@ annotation = do
             whitespace
             return (k,v)
 
-heading = do
+heading attr = do
     leader <- many1 (char '=')
     whitespace
     inner <- manyTill textItem endOfHeading
-    return $ Header (length leader) nullAttr inner
+    return $ Header (length leader) attr inner
 
 endOfHeading = eof
              <|> try
