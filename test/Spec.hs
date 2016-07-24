@@ -196,6 +196,28 @@ main = defaultMain $
                         [ Str "/*[]{}" ]
                     ]
             ]
+        , testGroup "Links"
+            [ testCase "explicit label" $
+                assertValid
+                    "[[http://example.org/|Example]]"
+                    [ Para
+                        [ Link
+                            nullAttr
+                            [ Str "Example" ]
+                            ("http://example.org/", "Example")
+                        ]
+                    ]
+            , testCase "explicit label" $
+                assertValid
+                    "[[http://example.org/]]"
+                    [ Para
+                        [ Link
+                            nullAttr
+                            [ Str "http://example.org/" ]
+                            ("http://example.org/", "http://example.org/")
+                        ]
+                    ]
+            ]
         , testGroup "Inline markup: bold & italic"
             [ testCase "Bold" $
                 assertValid

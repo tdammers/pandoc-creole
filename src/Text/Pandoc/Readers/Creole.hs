@@ -126,10 +126,20 @@ textLine = do
 textItem =
     nowikiTextItem <|>
     newlineTextItem <|>
+    link <|>
     boldTextItem <|>
     italTextItem <|>
     whitespaceTextItem <|>
     rawTextItem
+
+link = do
+    try $ string "[[" *> notFollowedBy (char '[')
+    url <- many $ noneOf "|]"
+    label <- option url $ do
+        char '|'
+        many $ noneOf "]"
+    string "]]"
+    return $ Link nullAttr [ Str label ] (url, label)
 
 newlineTextItem = do
     try $ whitespace *> string "\\\\"
@@ -163,12 +173,16 @@ italTextItem = Emph <$>
 
 boldItalTextItem =
     nowikiTextItem <|>
+    newlineTextItem <|>
+    link <|>
     italTextItem <|>
     whitespaceTextItem <|>
     rawTextItem
 
 italBoldTextItem =
     nowikiTextItem <|>
+    newlineTextItem <|>
+    link <|>
     boldTextItem <|>
     whitespaceTextItem <|>
     rawTextItem
