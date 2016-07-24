@@ -54,7 +54,7 @@ listItemContent = (:[]) . Para . concat . intersperse [Space] <$>
     many1 textLine <* endOfListItem
 
 annotatedParagraph = do
-    attr <- try annotation
+    attr <- try preAnnotation
     division attr <|> heading attr
 
 annotation = do
@@ -65,7 +65,6 @@ annotation = do
         classes = words . fromMaybe "" . lookup "class" $ kvp
         kvp' = [ (k,v) | (k,v) <- kvp, k /= "id" && k /= "class" ]
     char ')'
-    eol
     return (idVal, classes, kvp')
     where
         attribute = do
@@ -77,11 +76,16 @@ annotation = do
             whitespace
             return (k,v)
 
+preAnnotation = annotation <* char ':' <* (eol <|> eof)
+
+postAnnotation = optional eol *> annotation <* (eol <|> eof)
+
 heading attr = do
     leader <- many1 (char '=')
     whitespace
     inner <- manyTill textItem endOfHeading
-    return $ Header (length leader) attr inner
+    attr' <- option attr (try postAnnotation)
+    return $ Header (length leader) attr' inner
 
 endOfHeading = eof
              <|> try
@@ -157,7 +161,8 @@ link = do
         char '|'
         many $ noneOf "]"
     string "]]"
-    return $ Link nullAttr [ Str label ] (url, label)
+    attr <- option nullAttr (try postAnnotation)
+    return $ Link attr [ Str label ] (url, label)
 
 image = do
     try $ string "{{" *> notFollowedBy (char '{')
@@ -166,7 +171,8 @@ image = do
         char '|'
         many $ noneOf "}"
     string "}}"
-    return $ Image nullAttr [ Str label ] (url, label)
+    attr <- option nullAttr (try postAnnotation)
+    return $ Image attr [ Str label ] (url, label)
 
 newlineTextItem = do
     try $ whitespace *> string "\\\\"
