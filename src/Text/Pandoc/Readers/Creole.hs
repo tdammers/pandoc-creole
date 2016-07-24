@@ -8,7 +8,8 @@ where
 import Text.Pandoc
 import Text.Pandoc.Error
 import Text.Parsec
-import Data.List (intersperse, intercalate)
+import Data.List (intersperse, intercalate, lookup)
+import Data.Maybe (fromMaybe)
 
 onLeft :: (a -> b) -> Either a c -> Either b c
 onLeft f (Left x) = Left (f x)
@@ -29,10 +30,35 @@ paragraph = nowikiBlock
           <|> division nullAttr
           <|> horizontalLine
           <|> heading
+          <|> annotatedParagraph
           <|> emptyParagraph
           -- <|> unorderedList
           -- <|> orderedList
           <|> textParagraph
+
+annotatedParagraph = do
+    attr <- try annotation
+    division attr
+
+annotation = do
+    string "@("
+    whitespace
+    kvp <- sepBy attribute (char ',')
+    let idVal = fromMaybe "" . lookup "id" $ kvp
+        classes = words . fromMaybe "" . lookup "class" $ kvp
+        kvp' = [ (k,v) | (k,v) <- kvp, k /= "id" && k /= "class" ]
+    string "):"
+    eol
+    return (idVal, classes, kvp')
+    where
+        attribute = do
+            k <- many (noneOf ")= \t\r\n")
+            whitespace
+            char '='
+            whitespace
+            v <- many (noneOf "),\r\n")
+            whitespace
+            return (k,v)
 
 heading = do
     leader <- many1 (char '=')
@@ -160,7 +186,7 @@ textChar = escapedChar <|> safeChar
 
 escapedChar = char '~' *> anyChar
 
-safeChar = noneOf " \n\r\t~*/[]\\{}"
+safeChar = noneOf " \n\r\t~*/[]\\{}@"
 
 eol = (try (string "\r\n") <|> string "\n") *> return ()
 

@@ -52,6 +52,32 @@ main = defaultMain $
                         ]
                     ]
             ]
+        , testGroup "Annotated Paragraphs"
+            [ testCase "div with ID" $
+                assertValid
+                    "@(id=foobar):\n[[[\nHi!\n]]]"
+                    [ Div ("foobar", [], [])
+                        [ Para
+                            [ Str "Hi!" ]
+                        ]
+                    ]
+            , testCase "div with classes" $
+                assertValid
+                    "@(class=foo bar):\n[[[\nHi!\n]]]"
+                    [ Div ("", ["foo", "bar"], [])
+                        [ Para
+                            [ Str "Hi!" ]
+                        ]
+                    ]
+            , testCase "div with other attributes" $
+                assertValid
+                    "@(data-thing=hello):\n[[[\nHi!\n]]]"
+                    [ Div ("", [], [("data-thing", "hello")])
+                        [ Para
+                            [ Str "Hi!" ]
+                        ]
+                    ]
+            ]
         , testGroup "Headings"
             [ testCase "simple (level 1)" $
                 assertValid
