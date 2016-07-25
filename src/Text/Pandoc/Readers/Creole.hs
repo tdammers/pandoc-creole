@@ -36,22 +36,28 @@ paragraph = nowikiBlock
           -- <|> orderedList
           <|> textParagraph
 
-unorderedList level
-    | level <= 10 = do
-        BulletList <$>
-            many1 (
-                fmap (:[]) (unorderedList (succ level))
-                <|>
-                unorderedListItem level
-            )
-    | otherwise = BulletList <$> many1 (unorderedListItem level)
+unorderedList level = BulletList <$> many1 (unorderedListItem level)
 
 unorderedListItem level = do
-    try (count level (char '*') *> notFollowedBy (char '*') *> whitespace1)
-    listItemContent
+    unorderedListBullet level
+    unorderedListItemContent level
 
-listItemContent = (:[]) . Para . concat . intersperse [Space] <$>
-    many1 textLine <* endOfListItem
+unorderedListBullet level = do
+    try (lookAhead $ char '*')
+    try (count level (char '*') *> whitespace1)
+
+unorderedListItemContent :: Int -> Parsec String () [Block]
+unorderedListItemContent level = (:[]) . Para . concat <$> many1 (unorderedListLine level)
+
+unorderedListLine level = do
+    notFollowedBy $
+        (ignore . try $ unorderedListBullet level) <|>
+        (ignore . try $ whitespace *> string "----") <|>
+        (ignore . try $ whitespace *> char '=') <|>
+        (ignore . try $ whitespace *> string "]]]" *> notFollowedBy (char ']')) <|>
+        (ignore eol) <|>
+        (ignore eof)
+    many1 (notFollowedBy eol *> textItem) <* (eol <|> eof)
 
 annotatedParagraph = do
     attr <- try preAnnotation
@@ -137,6 +143,7 @@ textParagraph = Para . concat . intersperse [Space] <$>
 
 textLine = do
     notFollowedBy $
+        (ignore . try $ unorderedListBullet 1) <|>
         (ignore . try $ whitespace *> string "----") <|>
         (ignore . try $ whitespace *> char '=') <|>
         (ignore . try $ whitespace *> string "]]]" *> notFollowedBy (char ']')) <|>
@@ -183,7 +190,7 @@ newlineTextItem = do
 
 boldTextItem = Strong <$>
     (
-        try (string "**") *>
+        try (string "**" *> notFollowedBy whitespace1) *>
         many1 boldItalTextItem <*
         (
             eof <|>
@@ -271,9 +278,3 @@ endOfParagraph = (ignore . lookAhead . try $ whitespace *> string "----")
                <|> (ignore . lookAhead . try $ whitespace *> string "]]]" *> notFollowedBy (char ']'))
                <|> ignore eof
                <|> ignore eol
-
-endOfListItem = (ignore . lookAhead . try $ whitespace *> string "----")
-              <|> (ignore . lookAhead . try $ whitespace *> char '=')
-              <|> (ignore . lookAhead . try $ oneOf "*#")
-              <|> ignore eof
-              <|> ignore eol

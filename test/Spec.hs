@@ -52,6 +52,25 @@ main = defaultMain $
                         ]
                     ]
             ]
+        , testGroup "Unordered List"
+            [ testCase "simple" $
+                assertValid
+                    "* Item1\n* Item2\n"
+                    [ BulletList
+                        [ [Para [Str "Item1"]]
+                        , [Para [Str "Item2"]]
+                        ]
+                    ]
+            , testCase "after para" $
+                assertValid
+                    "asdf\n\n* Item1\n* Item2\n"
+                    [ Para [Str "asdf"]
+                    , BulletList
+                        [ [Para [Str "Item1"]]
+                        , [Para [Str "Item2"]]
+                        ]
+                    ]
+            ]
         , testGroup "Annotated Paragraphs"
             [ testCase "div with ID" $
                 assertValid
