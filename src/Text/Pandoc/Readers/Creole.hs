@@ -47,11 +47,15 @@ unorderedListBullet level = do
     try (count level (char '*') *> whitespace1)
 
 unorderedListItemContent :: Int -> Parsec String () [Block]
-unorderedListItemContent level = (:[]) . Para . concat <$> many1 (unorderedListLine level)
+unorderedListItemContent level =
+    (:) <$> textItem <*> many anyItem
+    where
+        textItem = Para . concat <$> many1 (unorderedListLine level)
+        anyItem = unorderedList (succ level) <|> textItem
 
 unorderedListLine level = do
     notFollowedBy $
-        (ignore . try $ unorderedListBullet level) <|>
+        (ignore . try $ many1 (char '*') *> whitespace1) <|>
         (ignore . try $ whitespace *> string "----") <|>
         (ignore . try $ whitespace *> char '=') <|>
         (ignore . try $ whitespace *> string "]]]" *> notFollowedBy (char ']')) <|>

@@ -64,6 +64,30 @@ main = defaultMain $
                             , [Para [Str "Item2"]]
                             ]
                         ]
+                , testCase "nested" $
+                    assertValid
+                        "* Item1\n** Item2\n"
+                        [ BulletList
+                            [ [ Para [Str "Item1"]
+                              , BulletList
+                                [ [Para [Str "Item2"]]
+                                ]
+                              ]
+                            ]
+                        ]
+                , testCase "nested, popping in and out" $
+                    assertValid
+                        "* Item1\n** Item2\n* Item3"
+                        [ BulletList
+                            [ [ Para [Str "Item1"]
+                              , BulletList
+                                [ [Para [Str "Item2"]]
+                                ]
+                              ]
+                            , [ Para [Str "Item3"]
+                              ]
+                            ]
+                        ]
                 , testCase "containing link" $
                     assertValid
                         "asdf\n\n* [[/example|test (one)]]\\\\blah\n* Item2\n"
