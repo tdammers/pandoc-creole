@@ -84,7 +84,7 @@ annotation = do
 
 preAnnotation = annotation <* char ':' <* (eol <|> eof)
 
-postAnnotation = optional eol *> annotation <* (eol <|> eof)
+postAnnotation = optional eol *> annotation <* notFollowedBy (char ':')
 
 heading attr = do
     leader <- many1 (char '=')

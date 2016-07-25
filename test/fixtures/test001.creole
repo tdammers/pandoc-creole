@@ -1,0 +1,12 @@
+= Heading
+
+@(class=test):
+[[[
+
+{{image.png|An image appears!}}
+@(class=lfloat)
+
+* [[/example/test.html|test]]
+  \\ This is a test.
+
+]]]
