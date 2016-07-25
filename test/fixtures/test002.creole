@@ -1,0 +1,58 @@
+= Musik
+
+@(class=music):
+[[[
+
+== Improvisationen 
+=== Posaune und andere Instrumente
+{{/media/photos/preview/tobi-pmf-oss-IMG_1223.jpg|Tobias}}
+@(class=photo lfloat)
+
+* [[/media/music/interrupted.ogg|Interrupted (working title)]]
+  \\ //Posane, Drums, Melodica//
+* [[/media/music/Puppy_Killer.mp3|Puppy Killer]]
+  \\ //Posaune// 
+  \\Eine Improvisation mit Loop-Delay
+* [[/media/music/Incidental_Fugue.mp3|Incidental Fugue]]
+  \\ //Posaune//
+  \\Eine Improvisationssession, die ursprünglich als selbständiges Stück 
+  gedacht war. Ich habe die Aufnahme 3x zeitversetzt mit sich selbst 
+  überlagert, wodurch eine fugenartige Struktur entsteht.
+* [[/media/music/Atheistisches_Kurzgebet.mp3|Atheistisches Kurzgebet]]
+  \\ //Posaune, Piano und Stimme//
+  \\ Für diese Komposition habe ich einige kurze Posaunenloops aufgenommen
+  und eine Klavierimprovisation und 3 gesprochene Improvisationen mit
+  pseudo-philosophischen Texten hinzugefügt.
+* [[/media/music/Meditation_15_(02-12-2009).ogg|Meditation 15 (02-12-2009)]]
+  \\ //Posaune//
+  \\Mehrere Improvisationen, nacheinander aufgenommen.
+
+== Kompositionen
+
+{{/media/photos/preview/sideview1.jpg|Tobias}}
+@(class=photo rfloat)
+
+* [[/media/music/1uhr58.mp3|1uhr58]]
+  \\ Am produktivsten bin ich mitten in der Nacht; dieses Stück habe
+  ich in einer Nacht komponiert und aufgenommen. Der Titel ist die
+  Uhrzeit zu der die wichtigsten Teile aufgenommen waren.
+* [[/media/music/2008-04-08.mp3|2008-04-08]]
+  \\ In diesem Stück spielt die Melodica die Hauptrolle, ein Instrument
+  mit faszinierenden expressive Möglichkeiten, trotz der offensichtlichen
+  Beschränkungen.
+* [[/media/music/landó_para_la_humanidad.mp3|Landó para la humanidad]]
+  \\ Landó ist ein Afro-Peruanischer Musikstil, bei dem der Cajón eine
+  wichtige Rolle spielt. In dieser Komposition kommen Piano, Bass und 
+  Posaune hinzu.
+
+== [[/en/music/voor_de_kruispunt_kids|Voor de kruispunt kids]]
+Als ich die Grunschule "Het Kruispunt" als Musiklehrer verliess, habe ich
+als Abschiedsgeschenk für die Kinder einige Improvisationen aufgenommen.
+
+== [[/en/music/art_calendar|Kunstkalender]]
+Aus einer Suite von 12 Miniaturen, je eine für jeden Monat, jeweils
+inspiriert durch ein Bild eines großen Malers.
+
+== [[/en/music/older|Ältere Aufnahmen]]
+Aufnahmen aus der Zeit von 2003-2005
+]]]

@@ -94,7 +94,7 @@ main = defaultMain $
                         [ Para [ Str "asdf" ]
                         , BulletList
                             [ [ Para
-                                [ Link 
+                                [ Link
                                     nullAttr
                                     [ Str "test (one)" ]
                                     ("/example", "test (one)")
@@ -347,6 +347,9 @@ main = defaultMain $
             [ testCase "test001" $
                 assertParses
                     $(embedStringFile "test/fixtures/test001.creole")
+            , testCase "test002" $
+                assertParses
+                    $(embedStringFile "test/fixtures/test002.creole")
             ]
         ]
 
@@ -354,10 +357,10 @@ assertValid :: String -> [Block] -> IO ()
 assertValid input output = do
     let actual = onLeft show $ readCreole def input
         expected = Right $ Pandoc nullMeta output
-    assertEqual "" expected actual 
+    assertEqual "" expected actual
 
 assertParses :: String -> IO ()
 assertParses input = do
     let actual = onRight (const True) . onLeft show $ readCreole def input
         expected = Right True
-    assertEqual "" expected actual 
+    assertEqual "" expected actual
