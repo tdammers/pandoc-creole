@@ -1,6 +1,6 @@
 name: pandoc-creole
-version: 0.1.0.0
-synopsis: Initial project template from stack
+version: 0.2.0.0
+synopsis: A custom creole wiki version with annotations
 description: Please see README.md
 homepage: https://github.com/tdammers/pandoc-creole#readme
 license: BSD3
