@@ -1,5 +1,5 @@
-module Text.Pandoc.Readers.Creole
-( readCreole
+module Text.Pandoc.Readers.CustomCreole
+( readCustomCreole
 , onLeft
 , onRight
 )
@@ -19,9 +19,9 @@ onRight :: (b -> c) -> Either a b -> Either a c
 onRight f (Right x) = Right (f x)
 onRight _ (Left r) = Left r
 
-readCreole :: ReaderOptions -> String -> Either PandocError Pandoc
-readCreole options input =
-    onLeft (ParsecError input) $
+readCustomCreole :: ReaderOptions -> String -> Either PandocError Pandoc
+readCustomCreole options input =
+    onLeft (PandocParsecError input) $
     runParser wikipage () "creole source" input
 
 wikipage = Pandoc nullMeta <$> (spaces *> manyTill paragraph eof)

@@ -15,9 +15,9 @@ cabal-version: >=1.10
 
 library
     hs-source-dirs: src
-    exposed-modules: Text.Pandoc.Readers.Creole
+    exposed-modules: Text.Pandoc.Readers.CustomCreole
     build-depends: base >= 4.7 && < 5
-                 , pandoc
+                 , pandoc >= 2.0 && < 3
                  , parsec
     
     default-language: Haskell2010
